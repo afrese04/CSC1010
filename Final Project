@@ -1,0 +1,30 @@
+#install.packages("jsonlite")
+library(jsonlite)
+#install.packages("httpuv")
+library(httpuv)
+#install.packages("httr")
+library(httr)
+
+# Can be github, linkedin etc depending on application
+oauth_endpoints("github")
+
+# Change based on what you 
+myapp <- oauth_app(appname = "CSC1010",
+                   key = "d47fe36561bc8135eecc",
+                   secret = "8bdcea8660ca52349c8a93e94b5ac713b95f67b0")
+
+# Get OAuth credentials
+github_token <- oauth2.0_token(oauth_endpoints("github"), myapp)
+
+# Use API
+gtoken <- config(token = github_token)
+req <- GET("https://api.github.com/users/jtleek/repos", gtoken)
+
+# Take action on http error
+stop_for_status(req)
+
+# Extract content from a request
+json1 = content(req)
+
+# Convert to a data.frame
+gitDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
